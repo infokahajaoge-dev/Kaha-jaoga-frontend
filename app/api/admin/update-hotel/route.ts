@@ -1,18 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseAdmin, supabaseAdminNotConfigured } from "@/lib/supabase-admin";
 
 export async function POST(req: NextRequest) {
   try {
-    const supabaseAdmin = createClient(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!,
-      {
-        auth: {
-          autoRefreshToken: false,
-          persistSession: false
-        }
-      }
-    );
+    const supabaseAdmin = getSupabaseAdmin();
+    if (!supabaseAdmin) return supabaseAdminNotConfigured();
 
     const { id, status, admin_note } = await req.json();
 

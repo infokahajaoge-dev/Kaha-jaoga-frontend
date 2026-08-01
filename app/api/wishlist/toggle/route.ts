@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!,
-  { auth: { autoRefreshToken: false, persistSession: false } }
-);
+import { getSupabaseAdmin, supabaseAdminNotConfigured } from "@/lib/supabase-admin";
 
 export async function POST(req: NextRequest) {
   try {
+    const supabaseAdmin = getSupabaseAdmin();
+    if (!supabaseAdmin) return supabaseAdminNotConfigured();
+
     const { user_id, hotel_id, hotel_name, hotel_img, hotel_location, hotel_price, hotel_rating } = await req.json();
     const { data: existing } = await supabaseAdmin
       .from("wishlists")
